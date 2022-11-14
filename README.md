@@ -39,7 +39,7 @@ These types are currently unsupported:
 - Customer (although - possibly D365 creates multiple columns for this in the entity metadata? I've not tested this)
 - File
 
-## Securty and Auditing
+## Security and Auditing
 Currently, this project doesn't do anything for either security or auditing though you can of course use D365 to do basic management of which teams/group have access to a particular virtual entity. 
 
 If you need to filter results based on your user permissions, you'll need to make changes to the code at this stage. Potentially, when the time comes, I might look into it. Similarly with auditing - if you want to allow create, update and delete operations and want some auditing you'll need to change the code to do that.
