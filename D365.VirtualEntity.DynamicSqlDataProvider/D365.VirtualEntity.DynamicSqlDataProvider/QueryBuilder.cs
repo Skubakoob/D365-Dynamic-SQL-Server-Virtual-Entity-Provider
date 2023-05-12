@@ -199,8 +199,10 @@ namespace D365.VirtualEntity.DynamicSqlDataProvider
             var ordering = new List<QueryOrder>();
             foreach (var o in qe.Orders)
             {
+                var attribute = Metadata.Attributes.First(x => x.LogicalName == o.AttributeName);
                 var orderType = o.OrderType == OrderType.Ascending ? QueryOrderType.Ascending : QueryOrderType.Descending;
-                ordering.Add(new QueryOrder(o.AttributeName, orderType));
+                ordering.Add(new QueryOrder(attribute.ExternalName, orderType));
+                //ordering.Add(new QueryOrder(o.AttributeName, orderType));
             }
             return ordering;
         }
@@ -357,8 +359,8 @@ namespace D365.VirtualEntity.DynamicSqlDataProvider
             }
 
             if (Ordering.Count == 0)
-            {
-                Ordering.Add(new QueryOrder(Metadata.PrimaryNameAttribute, QueryOrderType.Ascending));
+            {                
+                Ordering.Add(new QueryOrder(NameAttribute.ExternalName, QueryOrderType.Ascending));
             }
 
             if (Ordering.Count > 0)
