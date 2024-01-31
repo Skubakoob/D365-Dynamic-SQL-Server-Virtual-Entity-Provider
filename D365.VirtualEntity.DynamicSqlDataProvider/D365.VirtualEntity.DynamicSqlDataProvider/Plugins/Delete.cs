@@ -1,4 +1,5 @@
-﻿using Microsoft.Xrm.Sdk;
+﻿using D365.VirtualEntity.DynamicSqlDataProvider.Services;
+using Microsoft.Xrm.Sdk;
 using System;
 
 namespace D365.VirtualEntity.DynamicSqlDataProvider.Plugins
@@ -22,7 +23,7 @@ namespace D365.VirtualEntity.DynamicSqlDataProvider.Plugins
 
                     EntityReference entityRef = (EntityReference)context.InputParameters["Target"];
 
-                    var veService = new VirtualEntityService(datasource, service, tracer, context.PrimaryEntityName);
+                    var veService = new VirtualEntityService(datasource, service, tracer, context);
                     veService.DeleteEntity(entityRef);
                 }
                 catch (Exception e)

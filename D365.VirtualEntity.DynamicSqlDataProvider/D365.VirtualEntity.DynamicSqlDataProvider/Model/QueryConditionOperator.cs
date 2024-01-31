@@ -18,8 +18,11 @@ namespace D365.VirtualEntity.DynamicSqlDataProvider.Model
         Like,
         BeginsWith,
         NotNull,
-        Null
-        
+        Null,
+        // these are then mapped to Eq/Ne
+        In,
+        NotIn
+
         // IsNull etc.
     }
 }

@@ -1,4 +1,5 @@
-﻿using Microsoft.Xrm.Sdk;
+﻿using D365.VirtualEntity.DynamicSqlDataProvider.Services;
+using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Extensions;
 using Microsoft.Xrm.Sdk.Query;
 using System;
@@ -25,9 +26,11 @@ namespace D365.VirtualEntity.DynamicSqlDataProvider.Plugins
             IOrganizationService service = factory.CreateOrganizationService(context.UserId);
             var retriever = (IEntityDataSourceRetrieverService)serviceProvider.GetService(typeof(IEntityDataSourceRetrieverService));
             var datasource = retriever.RetrieveEntityDataSource();
+
             try
             {
-                var veService = new VirtualEntityService(datasource, service, tracer, context.PrimaryEntityName);
+
+                var veService = new VirtualEntityService(datasource, service, tracer, context);
 
                 QueryExpression queryExpression = context.InputParameterOrDefault<QueryExpression>("Query");
                 var visitor = new SearchVisitor();

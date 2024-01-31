@@ -9,9 +9,10 @@ namespace D365.VirtualEntity.DynamicSqlDataProvider.Model
 {
     public class QueryFilter
     {
-        public List<QueryCondition> Conditions { get; set; }=new List<QueryCondition>();
+        public List<QueryCondition> Conditions { get; set; } = new List<QueryCondition>();
         public QueryFilterOperator Operator { get; set; } = QueryFilterOperator.AND;
         public List<QueryFilter> Filters { get; set; } = new List<QueryFilter>();
+
 
         public void AddCondition(string attributeName, object value, QueryConditionOperator conditionOperator = QueryConditionOperator.Eq)
         {
