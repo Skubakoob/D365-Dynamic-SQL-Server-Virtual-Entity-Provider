@@ -24,25 +24,25 @@ namespace D365.VirtualEntity.DynamicSqlDataProvider.Helpers
 
         public static SqlConnection GetSqlConnection(ITracingService tracer, DSqlVeP_DynamicSqlVirtualEntityDataSource datasource)
         {
-            tracer.Trace($"Configuring SQL Connection Type: {datasource.dsqlvep_connectiontype.ToString()}");
+            tracer.Trace($"Configuring SQL Connection Type: {datasource.DSqlVeP_ConnectionType.ToString()}");
 
             var connection = new SqlConnection();
             try
             {
                 // introduce a type
-                if (datasource.dsqlvep_connectiontype == DSqlVeP_DynamicSqlVirtualEntityDataSource_DSqlVeP_ConnectionType.AADConnection)
+                if (datasource.DSqlVeP_ConnectionType == DSqlVeP_DynamicSqlVirtualEntityDataSource_DSqlVeP_ConnectionType.AadConnection)
                 {
                     
                     SqlConnectionStringBuilder csb = new SqlConnectionStringBuilder();
-                    csb.DataSource = datasource.dsqlvep_servername;
-                    csb.InitialCatalog = datasource.dsqlvep_databasename;
-                    var accessToken = GetAadToken(datasource.dsqlvep_azureadtenantid, datasource.dsqlvep_azureadclientid, datasource.dsqlvep_azureadclientsecret);
+                    csb.DataSource = datasource.DSqlVeP_ServerName;
+                    csb.InitialCatalog = datasource.DSqlVeP_DataBasename;
+                    var accessToken = GetAadToken(datasource.DSqlVeP_AzureAdTenantId, datasource.DSqlVeP_AzureAdClientId, datasource.DSqlVeP_AzureAdClientSecret);
                     connection.ConnectionString = csb.ConnectionString;
                     connection.AccessToken = accessToken;
                 }
-                else if (datasource.dsqlvep_connectiontype == DSqlVeP_DynamicSqlVirtualEntityDataSource_DSqlVeP_ConnectionType.SQLConnection && !string.IsNullOrWhiteSpace(datasource.dsqlvep_connectionstring))
+                else if (datasource.DSqlVeP_ConnectionType == DSqlVeP_DynamicSqlVirtualEntityDataSource_DSqlVeP_ConnectionType.SqlConnection && !string.IsNullOrWhiteSpace(datasource.DSqlVeP_ConnectionString))
                 {
-                    connection.ConnectionString = datasource.dsqlvep_connectionstring;
+                    connection.ConnectionString = datasource.DSqlVeP_ConnectionString;
                 }
                 else
                 {

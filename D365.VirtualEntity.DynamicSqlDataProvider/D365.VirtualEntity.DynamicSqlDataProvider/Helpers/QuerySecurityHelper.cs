@@ -32,7 +32,7 @@ namespace D365.VirtualEntity.DynamicSqlDataProvider.Helpers
         {
             var filter = new QueryFilter();
             var userIsAdmin = UserService.UserIsSysAdmin(service, userId);
-            if (!string.IsNullOrWhiteSpace(datasource.dsqlvep_ownersecurityattributename) && !userIsAdmin)
+            if (!string.IsNullOrWhiteSpace(datasource.DSqlVeP_OwnerSecurityAttributeName) && !userIsAdmin)
             {
                 var userTeams = UserService.GetTeams(service, userId);
                 var validUserIds = UserService.GetUsersInTeams(service, userTeams);
@@ -40,7 +40,7 @@ namespace D365.VirtualEntity.DynamicSqlDataProvider.Helpers
                 validOwners.AddRange(userTeams.Select(x => (object)x));
                 validOwners.AddRange(validUserIds.Select(x => (object)x));
                 validOwners.Add(userId);
-                filter.AddCondition(datasource.dsqlvep_ownersecurityattributename, validOwners, QueryConditionOperator.In);
+                filter.AddCondition(datasource.DSqlVeP_OwnerSecurityAttributeName, validOwners, QueryConditionOperator.In);
             }
             return filter;
         }

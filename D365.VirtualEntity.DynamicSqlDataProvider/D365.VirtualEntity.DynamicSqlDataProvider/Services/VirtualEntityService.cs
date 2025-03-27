@@ -48,7 +48,7 @@ namespace D365.VirtualEntity.DynamicSqlDataProvider.Services
         public bool DeleteEntity(EntityReference entity)
         {
 
-            if (!(bool)Datasource.dsqlvep_enabledelete)//ConnectionSettings.IsDeleteEnabled)
+            if (!(bool)Datasource.DSqlVeP_EnableDelete)//ConnectionSettings.IsDeleteEnabled)
             {
                 throw new InvalidPluginExecutionException("Deletes are disabled for this virtual entity connection data source");
             }
@@ -85,7 +85,7 @@ namespace D365.VirtualEntity.DynamicSqlDataProvider.Services
         }
         public Guid CreateEntity(Entity entity)
         {
-            if (!(bool)Datasource.dsqlvep_enablecreate) // ConnectionSettings.IsCreateEnabled)
+            if (!(bool)Datasource.DSqlVeP_EnableCreate) // ConnectionSettings.IsCreateEnabled)
             {
                 throw new InvalidPluginExecutionException("Creates are disabled for this virtual entity connection data source");
             }
@@ -147,7 +147,7 @@ namespace D365.VirtualEntity.DynamicSqlDataProvider.Services
         }
         public bool UpdateEntity(Entity entity)
         {
-            if (!(bool)Datasource.dsqlvep_enableupdate)
+            if (!(bool)Datasource.DSqlVeP_EnableUpdate)
             {
                 throw new InvalidPluginExecutionException("Updates are disabled for this virtual entity connection data source");
             }
@@ -211,7 +211,7 @@ namespace D365.VirtualEntity.DynamicSqlDataProvider.Services
 
             var queryResponse = RetrieveData(queryBuilder, true);
             // Update the mapped records with any linked entity data, if the connection allows it
-            if ((bool)Datasource.dsqlvep_retrievelinkdata)// ConnectionSettings.CanRetrieveLinkData)
+            if ((bool)Datasource.DSqlVeP_RetrieveLinkData)// ConnectionSettings.CanRetrieveLinkData)
             {
                 queryResponse.MappedEntities = PopulateLinkedEntityValues(queryResponse.MappedEntities, qe);
             }
