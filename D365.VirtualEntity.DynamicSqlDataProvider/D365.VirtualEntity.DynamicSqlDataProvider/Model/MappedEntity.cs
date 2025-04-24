@@ -10,7 +10,7 @@ namespace D365.VirtualEntity.DynamicSqlDataProvider.Model
     public class MappedEntity
     {
         public string EntityLogicalName { get; }
-        public List<MappedEntityAttribute> Attributes=new List<MappedEntityAttribute>();
+        public List<MappedEntityAttribute> Attributes = new List<MappedEntityAttribute>();
 
         public MappedEntity(string entityLogicalName)
         {
@@ -35,8 +35,8 @@ namespace D365.VirtualEntity.DynamicSqlDataProvider.Model
 
         public Entity ToEntity()
         {
-            var entity= new Entity(EntityLogicalName);
-            foreach(var attribute in Attributes)
+            var entity = new Entity(EntityLogicalName);
+            foreach (var attribute in Attributes)
             {
                 if (attribute.CrmValue != null)
                 {
@@ -48,8 +48,8 @@ namespace D365.VirtualEntity.DynamicSqlDataProvider.Model
                 }
             }
             return entity;
-        }        
+        }
     }
 
-    
+
 }

@@ -1,4 +1,5 @@
-﻿using Microsoft.Xrm.Sdk;
+﻿using D365.VirtualEntity.DynamicSqlDataProvider.Services;
+using Microsoft.Xrm.Sdk;
 using System;
 
 namespace D365.VirtualEntity.DynamicSqlDataProvider.Plugins
@@ -29,7 +30,7 @@ namespace D365.VirtualEntity.DynamicSqlDataProvider.Plugins
             {
                 EntityReference target = (EntityReference)context.InputParameters["Target"];
                 var id = target.Id;
-                var veService = new VirtualEntityService(datasource, service, tracer, context.PrimaryEntityName);
+                var veService = new VirtualEntityService(datasource, service, tracer, context);
                 var entity = veService.GetEntity(id);
                 context.OutputParameters["BusinessEntity"] = entity;
             }

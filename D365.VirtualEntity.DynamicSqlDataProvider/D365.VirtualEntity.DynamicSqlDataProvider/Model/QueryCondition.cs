@@ -9,9 +9,11 @@ namespace D365.VirtualEntity.DynamicSqlDataProvider.Model
     public class QueryCondition
     {
         public string AttributeName { get; set; } = String.Empty;
+        // public List<object> Value { get; set; } = new List<object>();
         public List<object> Value { get; set; } = new List<object>();
+
         public QueryConditionOperator Operator { get; set; } = QueryConditionOperator.Eq;
-        
+
         public QueryCondition()
         {
 
@@ -30,7 +32,7 @@ namespace D365.VirtualEntity.DynamicSqlDataProvider.Model
             AttributeName = attributeName;
             Operator = conditionOperator;
             Value = values;
-        
+
         }
     }
 }
