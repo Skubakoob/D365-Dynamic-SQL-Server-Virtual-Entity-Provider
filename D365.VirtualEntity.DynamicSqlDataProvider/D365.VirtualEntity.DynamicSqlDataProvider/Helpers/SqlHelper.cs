@@ -1,25 +1,43 @@
 ﻿using D365.VirtualEntity.DynamicSqlDataProvider.ProxyClasses;
-using Microsoft.IdentityModel.Clients.ActiveDirectory;
+//using Microsoft.IdentityModel.Clients.ActiveDirectory;
 using Microsoft.Xrm.Sdk;
 using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using static D365.VirtualEntity.DynamicSqlDataProvider.ProxyClasses.DSqlVeP_DynamicSqlVirtualEntityDataSource;
+using System.Net.Http;
+using System.Text.Json;
 
 namespace D365.VirtualEntity.DynamicSqlDataProvider.Helpers
 {
     public static class SqlHelper
     {
-        public static string GetAadToken(string tenantId, string clientId, string clientSecret)
+        private class AccessToken
+        {
+            public string access_token { get; set; }
+        }
+
+
+        public static string GetAadToken(string tenantId, string clientId, string clientSecret, ITracingService tracer)
         {
             string token = string.Empty;
-            ClientCredential clientCredentials = new ClientCredential(clientId, clientSecret);
-            AuthenticationContext authenticationContext = new AuthenticationContext($"https://login.microsoftonline.com/{tenantId}", validateAuthority: false);
-            AuthenticationResult authenticationResult = authenticationContext.AcquireTokenAsync("https://database.windows.net", clientCredentials).GetAwaiter().GetResult();
-            return authenticationResult.AccessToken;
+                
+            using (HttpClient client = new HttpClient())
+            {
+                var body = new List<KeyValuePair<string, string>>
+                {
+                    new KeyValuePair<string, string>("client_id", clientId),
+                    new KeyValuePair<string, string>("client_secret", clientSecret),
+                    new KeyValuePair<string, string>("resource", "https://database.windows.net"),
+                    new KeyValuePair<string, string>("grant_type", "client_credentials"),
+                };
+
+                client.DefaultRequestHeaders.ConnectionClose = true;
+                var httpRes = client.PostAsync($"https://login.microsoftonline.com/{tenantId}/oauth2/token", new FormUrlEncodedContent(body)).Result;
+                string responseText = httpRes.Content.ReadAsStringAsync().Result; //Make sure it is synchonrous
+                var tokenval=JsonSerializer.Deserialize<AccessToken>(responseText);                
+                token = tokenval.access_token;
+            }
+            return token;
         }
 
         public static SqlConnection GetSqlConnection(ITracingService tracer, DSqlVeP_DynamicSqlVirtualEntityDataSource datasource)
@@ -36,7 +54,7 @@ namespace D365.VirtualEntity.DynamicSqlDataProvider.Helpers
                     SqlConnectionStringBuilder csb = new SqlConnectionStringBuilder();
                     csb.DataSource = datasource.DSqlVeP_ServerName;
                     csb.InitialCatalog = datasource.DSqlVeP_DataBasename;
-                    var accessToken = GetAadToken(datasource.DSqlVeP_AzureAdTenantId, datasource.DSqlVeP_AzureAdClientId, datasource.DSqlVeP_AzureAdClientSecret);
+                    var accessToken = GetAadToken(datasource.DSqlVeP_AzureAdTenantId, datasource.DSqlVeP_AzureAdClientId, datasource.DSqlVeP_AzureAdClientSecret, tracer);
                     connection.ConnectionString = csb.ConnectionString;
                     connection.AccessToken = accessToken;
                 }
