@@ -2,7 +2,7 @@
 An SQL Server data provider for D365 supporting CRUD operations
 
 ## What does it do?
-This is a connector intended for use with Azure SQL Server (though technically anything that takes an SQL Server connection string should probably work!)
+This is a connector intended for use with Azure SQL Server (though technically anything that takes an SQL Server connection string should probably work)
 
 **Note** - if you want to use Client ID/Secret credentials, use the azuread branch (it was working, but since I updated the code in this repo I haven't been able to retest it)
 
@@ -22,7 +22,8 @@ Give it a name, then:
 
 You can disable the create, update and delete operations altogether here if you wish (i.e. just to be sure Sys admins don't do anything they shouldn't, though you probably want to lock down permissions for your login anyway) 
 
-Once you have done the above, you can simply create a new entity as normal. So, create a new entity, check the "Virtual Entity" checkboc and choose the virtual entity datasource you set up in the previous step.
+Once you have done the above, you can create a virtual entity using the new datasource. Note that this process has changed slightly in recent times - when you create the entity, create it is a regular entity, not as a virtual entity, but then under "type" in the entity set it to virtual entity there (which is somewhat confusing)
+Using virtual entity will take you to the inbuilt connectors.
 
 You'll have to provide the external name to your SQL server table (this can have a schemaname if you need), external collection name doesn't do anything but is mandatory so just set it to the same as your external name. Make sure to set the external name on your primary field, and once you have saved the entity go to fields and update the primary key field with the external name of your SQL ID column.
 
@@ -52,4 +53,44 @@ The azuread branch of the codebase allows you to set an 'owner' attribute field 
 
 Currently, this project doesn't do anything for auditing.
 
+
+## Setting up SQL Server for Client ID/Secret
+Start by creating an app registration in azure
+i.e. MyDemoApp_Sql_User
+Get the client id (the application ID) and generate a secret. The default recommended expiration is 6 months, so be aware of that - You'll need to manage the secret renewal / rotation, but that's another topic.
+
+Next step is to configure SQL Server. You need to add the app user to your database. I'm doing this below by directly adding the user we just created to the database, but another perhaps better approach would be to do it via a group. 
+I am going to create a schema specifically for virtual tables, create a role that has access to this and then create a table in that schema just to prove it all works
+
+create schema virtual
+GO
+CREATE ROLE virtual_datawriter AUTHORIZATION [dbo]
+GO
+
+-- Grant access rights to a specific schema in the database
+GRANT 
+	DELETE, 
+	EXECUTE, 
+	INSERT, 
+	SELECT, 
+	UPDATE, 
+	VIEW DEFINITION 
+ON SCHEMA::virtual
+	TO virtual_datawriter
+GO
+CREATE USER [MyDemoApp_Sql_User] FROM EXTERNAL PROVIDER WITH DEFAULT_SCHEMA = virtual;
+GO
+EXEC sp_addrolemember N'virtual_datawriter', N'MyDemoApp_Sql_User'	
+
+Finally, we'll create a table to do some testing with:
+
+create table virtual.virtual_entity_demo(
+	[id] uniqueidentifier primary key default newid() not null,
+	[name] nvarchar(100),
+	[description] nvarchar(max),
+	[category] int null, -- i.e. for a lookup
+	[contact_id] uniqueidentifier null -- will link to contact
+)
+
+Once you've done all that, 
 
